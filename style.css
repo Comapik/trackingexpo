@@ -457,3 +457,50 @@ h2 {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
+
+.login-body {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+}
+
+.login-main {
+    max-width: 360px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.login-main h1 {
+    margin-bottom: 24px;
+}
+
+.login-form {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: left;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.login-form input {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+}
+
+.login-error {
+    color: #c53030;
+    font-size: 0.85rem;
+    margin: 10px 0 0;
+}

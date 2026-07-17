@@ -1,4 +1,7 @@
-<?php require __DIR__ . '/db.php'; ?>
+<?php
+require __DIR__ . '/auth.php';
+requireAuth();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

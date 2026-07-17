@@ -1,7 +1,8 @@
 <?php
-require __DIR__ . '/db.php';
+require __DIR__ . '/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
+requireAuthApi();
 
 try {
     $pdo = getPDO();

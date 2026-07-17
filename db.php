@@ -66,3 +66,6 @@ const WEATHER = [
     'soleil' => ['label' => 'Soleil', 'icon' => '☀️'],
     'canicule' => ['label' => 'Canicule', 'icon' => '🥵'],
 ];
+
+// Mot de passe d'accès à l'application.
+const APP_PASSWORD = 'expo2026';

@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/db.php';
+require __DIR__ . '/auth.php';
+requireAuth();
 
 $pdo = getPDO();
 $type = $_GET['type'] ?? 'visits';

@@ -66,6 +66,10 @@
     async function api(action, params = {}) {
         const body = new URLSearchParams({ action, ...params });
         const res = await fetch('api.php', { method: 'POST', body });
+        if (res.status === 401) {
+            window.location.href = 'login.php';
+            throw new Error('Authentification requise');
+        }
         const data = await res.json();
         if (!data.ok) throw new Error(data.error || 'Erreur');
         return data;
