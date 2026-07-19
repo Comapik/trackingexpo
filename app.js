@@ -320,53 +320,56 @@
         return new Date(dayKey).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
     }
 
-    // Convertit la valeur d'un <input type="week"> ("2026-W29") en plage lundi->dimanche.
-    function weekInputToRange(weekStr) {
-        const [yearStr, weekNumStr] = weekStr.split('-W');
-        const year = Number(yearStr);
-        const week = Number(weekNumStr);
-        const jan4 = new Date(year, 0, 4);
-        const jan4Day = (jan4.getDay() + 6) % 7; // lundi = 0
-        const week1Monday = new Date(jan4);
-        week1Monday.setDate(jan4.getDate() - jan4Day);
-        const monday = new Date(week1Monday);
-        monday.setDate(week1Monday.getDate() + (week - 1) * 7);
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
-        const fmt = (d) => d.toLocaleDateString('sv-SE');
-        return { from: fmt(monday), to: fmt(sunday) };
-    }
+    // Libellé de période inséré dans les boutons d'export selon le mode choisi.
+    const EXPORT_MODE_PHRASE = { day: 'du jour', start: 'depuis le début', period: 'de la période' };
 
     // Lit le sélecteur de période de la section export et renvoie { mode, from, to, label },
     // ou null (avec un toast) si la sélection est incomplète.
     function getExportPeriod() {
         const mode = document.querySelector('input[name="export-period"]:checked').value;
-        const today = todayDateInfo().key;
 
-        if (mode === 'today') {
-            return { mode, from: today, to: today, label: formatDayLabel(today) };
-        }
         if (mode === 'day') {
             const d = $('#export-day-input').value;
             if (!d) { showToast('Choisis une date'); return null; }
             return { mode, from: d, to: d, label: formatDayLabel(d) };
         }
-        if (mode === 'week') {
-            const w = $('#export-week-input').value;
-            if (!w) { showToast('Choisis une semaine'); return null; }
-            const { from, to } = weekInputToRange(w);
-            return { mode, from, to, label: `Semaine du ${formatShortDay(from)} au ${formatShortDay(to)}` };
+        if (mode === 'period') {
+            const from = $('#export-from-input').value;
+            const to = $('#export-to-input').value;
+            if (!from || !to) { showToast('Choisis les deux dates de la période'); return null; }
+            const [start, end] = from <= to ? [from, to] : [to, from];
+            return { mode, from: start, to: end, label: `Du ${formatShortDay(start)} au ${formatShortDay(end)}` };
         }
-        return { mode: 'all', from: null, to: null, label: 'Toute la période' };
+        return { mode: 'start', from: null, to: null, label: 'Depuis le début' };
+    }
+
+    function updateExportButtons() {
+        const mode = document.querySelector('input[name="export-period"]:checked').value;
+        const phrase = EXPORT_MODE_PHRASE[mode];
+        $('#btn-export-visits').textContent = `Exporter visiteurs ${phrase} (CSV)`;
+        $('#btn-export-sales').textContent = `Exporter ventes ${phrase} (CSV)`;
+
+        const imagesDisabled = mode === 'start';
+        const dayImageBtn = $('#btn-export-day-image');
+        const salesImageBtn = $('#btn-export-sales-image');
+        dayImageBtn.disabled = imagesDisabled;
+        salesImageBtn.disabled = imagesDisabled;
+        dayImageBtn.textContent = mode === 'period' ? 'Exporter la période (JPG)' : 'Exporter la journée (JPG)';
+        salesImageBtn.textContent = mode === 'period' ? 'Exporter les ventes de la période (JPG)' : 'Exporter les ventes (JPG)';
     }
 
     function initExportPeriod() {
-        $('#export-day-input').value = todayDateInfo().key;
+        const today = todayDateInfo().key;
+        $('#export-day-input').value = today;
+        $('#export-from-input').value = today;
+        $('#export-to-input').value = today;
         $('#export-period').addEventListener('change', (e) => {
             if (e.target.name !== 'export-period') return;
             $('#export-day-input').classList.toggle('hidden', e.target.value !== 'day');
-            $('#export-week-input').classList.toggle('hidden', e.target.value !== 'week');
+            $('#export-range-inputs').classList.toggle('hidden', e.target.value !== 'period');
+            updateExportButtons();
         });
+        updateExportButtons();
     }
 
     function initExportCsv() {
@@ -412,7 +415,7 @@
     async function exportDayImage() {
         const period = getExportPeriod();
         if (!period) return;
-        if (period.mode === 'all') { showToast('Choisis un jour ou une semaine pour l’image'); return; }
+        if (period.mode === 'start') { showToast('Choisis un jour ou une période pour l’image'); return; }
         try {
             const { period: p } = await api('period_stats', { from: period.from, to: period.to });
             const isWeek = p.from !== p.to;
@@ -479,7 +482,7 @@
     async function exportSalesImage() {
         const period = getExportPeriod();
         if (!period) return;
-        if (period.mode === 'all') { showToast('Choisis un jour ou une semaine pour l’image'); return; }
+        if (period.mode === 'start') { showToast('Choisis un jour ou une période pour l’image'); return; }
         try {
             const { period: p } = await api('period_stats', { from: period.from, to: period.to });
             const items = Object.values(p.sales);

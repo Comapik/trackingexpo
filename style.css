@@ -408,6 +408,29 @@ h2 {
     display: none;
 }
 
+.export-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-range.hidden {
+    display: none;
+}
+
+.export-range input {
+    flex: 1;
+    padding: 10px;
+    font-size: 0.95rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+}
+
+.export-range span {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
 .export-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -426,6 +449,11 @@ h2 {
     font-size: 0.85rem;
     text-decoration: none;
     font-weight: 600;
+}
+
+.btn-export:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 #firework-canvas {

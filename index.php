@@ -95,13 +95,16 @@ requireAuth();
         <h2>Export des données</h2>
         <div class="export-period" id="export-period">
             <div class="period-choice">
-                <label><input type="radio" name="export-period" value="today" checked> Aujourd'hui</label>
-                <label><input type="radio" name="export-period" value="day"> Un jour précis</label>
-                <label><input type="radio" name="export-period" value="week"> Une semaine</label>
-                <label><input type="radio" name="export-period" value="all"> Toute la période</label>
+                <label><input type="radio" name="export-period" value="day" checked> La journée</label>
+                <label><input type="radio" name="export-period" value="start"> Depuis le début</label>
+                <label><input type="radio" name="export-period" value="period"> Une période</label>
             </div>
-            <input type="date" id="export-day-input" class="export-period-input hidden">
-            <input type="week" id="export-week-input" class="export-period-input hidden">
+            <input type="date" id="export-day-input" class="export-period-input">
+            <div id="export-range-inputs" class="export-period-input export-range hidden">
+                <input type="date" id="export-from-input">
+                <span>au</span>
+                <input type="date" id="export-to-input">
+            </div>
         </div>
         <div class="export-row">
             <button id="btn-export-visits" class="btn-export">Exporter visiteurs (CSV)</button>
